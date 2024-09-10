@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.project01.mapper.MyPageMapper">
+
+
+  <select id="getMyPost" resultType="com.example.project01.domain.BoardVO">
+    select *
+    from board
+    where writer = #{writer}
+    order by id desc
+    OFFSET (#{page} - 1) * #{rowsPerPage} ROWS FETCH FIRST #{rowsPerPage} ROWS ONLY
+  </select>
+
+  <select id="getMyComment" resultType="com.example.project01.domain.BoardCommentVO">
+    select *
+    from board_comment
+    where writer = #{writer}
+    order by id desc
+    OFFSET (#{page} - 1) * #{rowsPerPage} ROWS FETCH FIRST #{rowsPerPage} ROWS ONLY
+  </select>
+
+  <select id="getTotalPost" resultType="long">
+    select count(*)
+    from board
+    where writer = #{writer}
+
+  </select>
+
+  <select id="getTotalComment" resultType="long">
+    select count(*)
+    from board_comment
+    where writer = #{writer}
+  </select>
+</mapper>

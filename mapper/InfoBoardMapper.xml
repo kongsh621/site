@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.project01.mapper.InfoBoardMapper">
+
+  <select id="getList" resultType="com.example.project01.domain.InfoBoardVO">
+    select *
+    from infoBoard
+  </select>
+
+  <select id="getRecommendList" resultType="com.example.project01.domain.InfoBoardVO">
+    select *
+    from infoboard
+    where total_rate >= 4.5
+    LIMIT 8
+  </select>
+
+  <select id="getListByTitle" resultType="com.example.project01.domain.InfoBoardVO">
+    select *
+    form infoBoard
+    where title like '%${title}%'
+  </select>
+
+  <select id="getListWithPaging" resultType="com.example.project01.domain.InfoBoardVO">
+    select *
+    from infoboard
+    ORDER BY id DESC
+    OFFSET (#{page} - 1) * #{rowsPerPage} ROWS FETCH FIRST #{rowsPerPage} ROWS ONLY
+  </select>
+
+  <select id="readById" resultType="com.example.project01.domain.InfoBoardVO">
+    select *
+    from infoboard
+    where id = #{id}
+  </select>
+
+  <insert id="insert">
+    insert into infoboard(id, title, content, actor, type, regdate)
+    values(nextval('seq_infoboard_id'), #{title}, #{content}, #{actor}, #{type}, #{regdate})
+  </insert>
+
+  <update id="update">
+    update infoboard
+    set title = #{title}, content = #{content}, actor = #{actor}, type = #{type}
+    where id = #{id}
+  </update>
+
+
+  <delete id="delete">
+    delete
+    from infoboard
+    where id = #{id}
+  </delete>
+
+  <select id="searchByTitle" parameterType="HashMap" resultType="com.example.project01.domain.InfoBoardVO">
+    <![CDATA[
+    select *
+    from infoboard
+    WHERE title LIKE '%' || #{search} || '%'
+       OR actor LIKE '%' || #{search} || '%'
+    ORDER BY id DESC
+    OFFSET (#{criteria.page} - 1) * #{criteria.rowsPerPage} ROWS FETCH FIRST #{criteria.rowsPerPage} ROWS ONLY
+     ]]>
+  </select>
+
+  <select id="sortByType" resultType="com.example.project01.domain.InfoBoardVO">
+    SELECT *
+    FROM infoboard
+    WHERE (#{type} = 'movie' AND type = 'movie')
+    OR (#{type} = 'drama' AND type = 'drama')
+    OR (#{type} IS NULL OR #{type} = '')
+    ORDER BY id DESC
+    LIMIT #{criteria.rowsPerPage}
+    OFFSET (#{criteria.page} - 1) * #{criteria.rowsPerPage};
+
+  </select>
+
+  <select id="getTotal" resultType="int">
+    SELECT COUNT(*)
+    FROM infoboard
+    WHERE (#{type} = 'movie' AND type = 'movie')
+    OR (#{type} = 'drama' AND type = 'drama')
+    OR (#{type} IS NULL OR #{type} = '')
+  </select>
+
+  <select id="getSearchTotal" resultType="int">
+    select count(*)
+    from infoboard
+    where title like '%${search}%'
+  </select>
+
+  <select id="isExistJjim" resultType="int">
+    select count(*)
+    from jjim
+    where infoboard_id = #{infoboard_id}
+      AND member_id = #{member_id}
+  </select>
+
+  <insert id="insertJjim">
+    insert into jjim(member_id, infoboard_id, is_like)
+    values(#{member_id}, #{infoboard_id}, #{is_like})
+  </insert>
+
+  <update id="changeIsLike">
+    UPDATE jjim
+    SET is_like = CASE
+    WHEN is_like = 'Y' THEN 'N'
+    WHEN is_like = 'N' THEN 'Y'
+    ELSE is_like
+    END
+    WHERE member_id = #{member_id} AND infoboard_id = #{infoboard_id}
+
+  </update>
+
+  <select id="getJjimList" resultType="com.example.project01.domain.JjimVO">
+    select *
+    from Jjim
+    where infoboard_id > 0
+  </select>
+
+  <select id="getJjimListWithPaging" parameterType="HashMap" resultType="com.example.project01.domain.InfoBoardVO">
+    select
+      i.id,
+      i.title,
+      i.regdate
+    from
+      jjim j
+    join
+      infoboard i on i.id = j.infoboard_id
+    where
+      j.member_id = #{id} AND j.is_like = 'Y'
+    LIMIT #{criteria.rowsPerPage}
+    OFFSET (#{criteria.page} - 1) * #{criteria.rowsPerPage};
+  </select>
+
+  <select id="getJjimTotal">
+    select count(*)
+    from Jjim
+  </select>
+<!--
+  <select id="getRateAve" resultType="Double">
+    SELECT CASE
+    WHEN COALESCE(#{count}, 0) = 0 THEN COALESCE(#{rate}, 0)
+    ELSE ROUND(((COALESCE(#{rating}, 0) * COALESCE(#{count}, 0) + COALESCE(#{rate}, 0)) / (COALESCE(#{count}, 0) + 1)), 1)
+    END AS rating
+    FROM ratings
+    WHERE board_id = #{ratingsVO.board_id}
+
+  </select>-->
+
+  <select id="getRatingsList" resultType="com.example.project01.domain.RatingsVO">
+    select *
+    from ratings
+  </select>
+
+<insert id="insertRating">
+  insert into ratings(member_id, board_id, rating, count)
+  values(
+    #{member_id},
+    #{board_id},
+    #{rating},
+    1
+  )
+</insert>
+
+  <select id="getAvgByBoard" resultType="com.example.project01.domain.RatingsVO">
+    SELECT
+    SUM(rating) * 1.0 / NULLIF(SUM(count), 0) As rating,
+    NULLIF(SUM(count), 0) As count
+    FROM ratings
+    WHERE board_id = #{board_id}
+  </select>
+
+<!--  작품 평균 평점 추가할 때 -->
+  <update id="updateTotalRate">
+    update infoboard
+    set total_rate = #{total_rate}, total = #{total}
+    where id = #{id}
+  </update>
+
+<!--  1인당 1번 평가 가능 -->
+  <select id="isExistRating" resultType="int">
+    select count(*)
+    from ratings
+    where member_id = #{member_id} AND board_id = #{board_id}
+  </select>
+
+</mapper>
