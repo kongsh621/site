@@ -33,6 +33,8 @@ https://github.com/kongsh621/site/blob/85166c38b687c93cbfb77936f59c7d9e427f32b9/
 
 쿠키에 아이디 저장 기능
 https://github.com/kongsh621/site/blob/85166c38b687c93cbfb77936f59c7d9e427f32b9/js/login.js?plain=1#L31-L55
+https://github.com/kongsh621/site/blob/7615e54371b6e3e3641f3470657e7d0189329672/java/com/example/project01/controller/MemberController.java?plain=1#L150-L158
 
 로그인 후 그전 주소로 돌아감
-https://github.com/kongsh621/site/blob/85166c38b687c93cbfb77936f59c7d9e427f32b9/js/login.js?plain=1#L31-L55
+https://github.com/kongsh621/site/blob/7615e54371b6e3e3641f3470657e7d0189329672/js/login.js?plain=1#L57-L92
+https://github.com/kongsh621/site/blob/7615e54371b6e3e3641f3470657e7d0189329672/java/com/example/project01/controller/MemberController.java?plain=1#L183-L195
