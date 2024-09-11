@@ -51,6 +51,12 @@
     where id = #{id}
   </update>
 
+  <update id="updateKakao">
+    update member
+    set name = #{name}, nickname = #{nickname}, age = #{age}, updatedate = CURRENT_TIMESTAMP
+    where id = #{id}
+  </update>
+
   <select id="emailCheck" resultType="int">
     select count(*)
     from member
