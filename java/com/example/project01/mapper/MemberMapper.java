@@ -35,4 +35,6 @@ public interface MemberMapper {
     long getTotal(Criteria criteria);
 
     String findEmail(String name);
+
+    int updateKakao(MemberVO member);
 }
