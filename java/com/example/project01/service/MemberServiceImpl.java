@@ -72,4 +72,9 @@ public class MemberServiceImpl implements MemberService {
     public long getTotal(Criteria criteria){
         return memberMapper.getTotal(criteria);
     }
+
+    @Override
+    public boolean updateKakao(MemberVO member) {
+        return memberMapper.updateKakao(member) == 1;
+    }
 }
