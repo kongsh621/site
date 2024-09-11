@@ -4,7 +4,6 @@
 https://github.com/kongsh621/site/blob/369af88ba91c923a85af395007afa474e830b1e0/java/com/example/project01/controller/MemberController.java?plain=1#L203-L309
 
 아이디 유효성 검사
-https://github.com/kongsh621/site/blob/85166c38b687c93cbfb77936f59c7d9e427f32b9/js/login.js?plain=1#L31-L55
 https://github.com/kongsh621/site/blob/e0184abeafc19c8aebd3138c41ea4871c598086d/java/com/example/project01/controller/MemberController.java?plain=1#L92-L112
 https://github.com/kongsh621/site/blob/e0184abeafc19c8aebd3138c41ea4871c598086d/java/com/example/project01/service/UserService.java?plain=1#L26-L30
 https://github.com/kongsh621/site/blob/e0184abeafc19c8aebd3138c41ea4871c598086d/java/com/example/project01/service/UserService.java?plain=1#L94-L103
