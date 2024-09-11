@@ -6,11 +6,13 @@ import com.example.project01.service.RedirectMessage;
 import com.example.project01.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -89,20 +91,45 @@ public class MemberController {
 
     // 아이디 중복 확인 버튼 ( userservice에서 함)
     @ResponseBody
-    @GetMapping("/idcheck")
-    public String idCheck(@RequestParam(value = "email", defaultValue = "") String email, Model model) {
-        boolean isValidEmail = userService.isValidEmail(email);
+    @PostMapping("/idcheck")
+    public ResponseEntity<?> idCheck(@RequestBody MemberVO member, Model model) {
+        boolean isValidEmail = userService.isValidEmail(member.getEmail());
+        System.out.println("중복확인 email = " + member.getEmail());
+        String message;
 
 //            MemberVO memberVO = new MemberVO();
 //            memberVO.setEmail(email);
 //            userService.registerAuthenticate(memberVO); // 사용 중인 이메일이면 오류 메시지
             if (!isValidEmail) {
-                model.addAttribute("message", "사용할 수 없는 아이디입니다.");
-            } else {
-                model.addAttribute("message", "사용 가능한 아이디입니다.");
+//                model.addAttribute("message", "사용할 수 없는 아이디입니다.");
+                message = "사용할 수 없는 아이디입니다.";
+                return ResponseEntity.ok(new ResponseMessage(message));
+            } else if (isValidEmail){
+                message = "사용 가능한 아이디입니다.";
+                return ResponseEntity.ok(new ResponseMessage(message));
+            }
+            else {
+//                model.addAttribute("message", "사용 가능한 아이디입니다.");
+                message = "오류";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
             }
 
-        return "member/idcheck";
+    }
+
+    public static class ResponseMessage{
+        private String message;
+        ResponseMessage(String message){
+            this.message = message;
+            System.out.println("message" + message);
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
     @GetMapping("/login")
@@ -188,7 +215,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
         String grant_type = "authorization_code";
-        String client_id = "JavaScript키";
+        String client_id = "e879f28762d8052b2499d5b104b296aa";
         String redirect_uri = "http://localhost:8080/member/auth/kakao/callback";
 
         params.add("grant_type", grant_type);
@@ -281,24 +308,45 @@ public class MemberController {
         return "redirect:/";
     }
 
-
     @GetMapping("/update")
     public String update(@SessionAttribute(name = "loginMember", required = false) MemberVO loginMember,
                          Model model) {
         model.addAttribute("loginSession", loginMember);
         model.addAttribute("member", loginMember);
         System.out.println("------------------loginMember: " + loginMember);
+        if (loginMember.getEmail() != null && loginMember.getEmail().toLowerCase().contains("kakao.login")) {
+            model.addAttribute("kakaoLogin", loginMember);
+            // 카카오 계정일 땐 비밀번호 변경할 수 없고 수정 가능 내용이 달라서 모델 객체로 보내준다.
+            System.out.println("카카오 계정");
+        }
 
         return "member/memberUpdate";
     }
 
     @PostMapping("/update")
     public String update(@SessionAttribute(name = "loginMember", required = false) MemberVO loginMember, Model model,
-                         @ModelAttribute MemberVO member, RedirectAttributes redirectAttributes, HttpSession session) {
+                         @ModelAttribute MemberVO member, RedirectAttributes redirectAttributes, HttpSession session,
+                         Criteria criteria) {
         model.addAttribute("loginSession", loginMember);
+
+        // 카카오 계정은 닉네임, 이름, 나이 수정 가능
+        if (loginMember.getEmail() != null && loginMember.getEmail().toLowerCase().contains("kakao.login")) {
+            System.out.println("memberVO = " + member);
+            loginMember.setName(member.getName());
+            loginMember.setNickname(member.getNickname());
+            loginMember.setAge(member.getAge());
+            boolean result = memberService.updateKakao(loginMember);
+            if (result){
+                redirectMessage.sendRedirect(redirectAttributes, loginMember.getId(), criteria, "업데이트 되었습니다.",
+                    model, "", null);
+                session.setAttribute("loginMember", loginMember);
+                return "redirect:/mypage/";
+            }
+        }
 
         // 기존 정보에 입력한 정보를 추가
         loginMember.setEmail(member.getEmail());
+        loginMember.setNickname(member.getNickname());
         loginMember.setName(member.getName());
         loginMember.setAge(member.getAge());
 
