@@ -31,4 +31,6 @@ public interface MemberService {
     boolean updatePass(MemberVO member);
 
     long getTotal(Criteria criteria);
+
+    boolean updateKakao(MemberVO member);
 }
