@@ -104,8 +104,7 @@ public class UserService {
 
 
     public boolean registerUser(MemberVO memberVO){
-//        if (!isValidEmail(memberVO.getEmail())) // 이메일 유효성 검사 -> 중복검사 버튼 누를 때 한다
-//            return false;
+        // 이메일 유효성 검사나 기입 조건은 뷰에서 검사
         if (memberVO == null){
             System.out.println("회원가입에 실패했습니다. memberVO = " + memberVO);
             return false;
