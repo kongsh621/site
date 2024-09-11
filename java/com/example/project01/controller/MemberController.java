@@ -188,7 +188,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
         String grant_type = "authorization_code";
-        String client_id = "e879f28762d8052b2499d5b104b296aa";
+        String client_id = "JavaScript키";
         String redirect_uri = "http://localhost:8080/member/auth/kakao/callback";
 
         params.add("grant_type", grant_type);
