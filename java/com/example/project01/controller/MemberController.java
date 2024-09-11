@@ -89,30 +89,25 @@ public class MemberController {
         return "redirect:/member/login";
     }
 
-    // 아이디 중복 확인 버튼 ( userservice에서 함)
+    // 아이디 중복 확인 버튼
     @ResponseBody
     @PostMapping("/idcheck")
     public ResponseEntity<?> idCheck(@RequestBody MemberVO member, Model model) {
         boolean isValidEmail = userService.isValidEmail(member.getEmail());
         System.out.println("중복확인 email = " + member.getEmail());
         String message;
-
-//            MemberVO memberVO = new MemberVO();
-//            memberVO.setEmail(email);
-//            userService.registerAuthenticate(memberVO); // 사용 중인 이메일이면 오류 메시지
-            if (!isValidEmail) {
-//                model.addAttribute("message", "사용할 수 없는 아이디입니다.");
-                message = "사용할 수 없는 아이디입니다.";
-                return ResponseEntity.ok(new ResponseMessage(message));
-            } else if (isValidEmail){
-                message = "사용 가능한 아이디입니다.";
-                return ResponseEntity.ok(new ResponseMessage(message));
-            }
-            else {
-//                model.addAttribute("message", "사용 가능한 아이디입니다.");
-                message = "오류";
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
-            }
+        
+        if (!isValidEmail) {
+            message = "사용할 수 없는 아이디입니다.";
+            return ResponseEntity.ok(new ResponseMessage(message));
+        } else if (isValidEmail){
+            message = "사용 가능한 아이디입니다.";
+            return ResponseEntity.ok(new ResponseMessage(message));
+        }
+        else {
+            message = "시스템 오류가 발생하였습니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+        }
 
     }
 
