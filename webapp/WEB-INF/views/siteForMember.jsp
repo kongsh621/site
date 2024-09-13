@@ -56,43 +56,35 @@
                     
                     <div class="card-body">
                         <div class="table-responsive">
-                            <c:choose>
-                                <c:when test="empty emptyResult">
-                                    <h1>검색 결과가 존재하지 않습니다.</h1>
-                                </c:when>
-                                <c:otherwise>
-                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>id</th>
-                                                <th>제목</th>
-                                                <th>작성자</th>
-                                                <th>작성일</th>
-                                                <th>조회수</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <c:forEach var="board" items="${list}">
-                                            <tr>
-                                                <td>
-                                                    <c:if test="${not empty admin}">
-                                                        <a href="/delete?id=${board.id}">    
-                                                            <button class="ml-1" id="adminDelete" onclick="unlinkApp()" data-href="/delete?id=${board.id}"><span>X</span></button>
-                                                        </a>    
-                                                    </c:if>
-                                                    ${board.id} 
-                                                </td>
-                                                <td><a href="../read?id=${board.id}&page=${pageMaker.criteria.page}">${board.title}</a></td>
-                                                <td>${board.writer}</td>
-                                                <td>${board.regdate}</td>
-                                                <td>${board.hits}</td>
-                                            </tr>
-                                        </c:forEach>
-                                        </tbody>
-                                    </table>
-                                </c:otherwise>
-                            </c:choose>
-                        
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>id</th>
+                                        <th>제목</th>
+                                        <th>작성자</th>
+                                        <th>작성일</th>
+                                        <th>조회수</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach var="board" items="${list}">
+                                    <tr>
+                                        <td>
+                                            <c:if test="${not empty admin}">
+                                                <a href="/delete?id=${board.id}">    
+                                                    <button class="ml-1" id="adminDelete" onclick="unlinkApp()" data-href="/delete?id=${board.id}"><span>X</span></button>
+                                                </a>    
+                                            </c:if>
+                                            ${board.id} 
+                                        </td>
+                                        <td><a href="../read?id=${board.id}&page=${pageMaker.criteria.page}">${board.title}</a></td>
+                                        <td>${board.writer}</td>
+                                        <td>${board.regdate}</td>
+                                        <td>${board.hits}</td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
                             <script>
                                 async function unlinkApp() {
                                     event.preventDefault(); // 기본 링크 이동을 막음
@@ -105,6 +97,7 @@
                                 }
                 
                             </script>
+
 
                               <!-- 페이징  -->
                     <%@ include file="/WEB-INF/views/fragment/paginationMemberBoard.jsp" %>
@@ -154,9 +147,6 @@ aria-hidden="true">
     </div>
 </div>
 </div>
-
-
-
         <!-- 헤더 마무리 -->
     </div>
 </div>
