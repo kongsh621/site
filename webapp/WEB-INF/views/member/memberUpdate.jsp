@@ -22,12 +22,15 @@
                       <div class="card-header">회원 정보 수정</div>
                         <div class="card-body">
                           <form action="/member/update" method="post">
+                            
+                            <c:if test="${empty kakaoLogin}">
                                 <div class="form-group row">
                                     <label for="email" class="col-md-4 col-form-label text-md-right">아이디:</label>
                                     <div class="col-md-5">
                                         <input type="text" class="form-control" name="email" id="email" value="${member.email}">
                                     </div>
                                 </div>
+                            </c:if>
 
                                 <div class="form-group row">
                                     <label for="name" class="col-md-4 col-form-label text-md-right">닉네임:</label>
