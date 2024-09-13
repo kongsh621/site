@@ -9,8 +9,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-
-
     </head>
     <body>
         <!-- 보드용 페이징  -->
@@ -18,8 +16,10 @@
     <div class="row col-12">
         <div class="justify-content-left offset-1">
             <p id=pageInfo><strong>
+                <c:if test="${pageMaker.lastPage != 1}">
                 ${criteria.page} / ${pageMaker.lastPage}
-            </strong></p>
+                </c:if>
+        </strong></p>
         </div>
         <!-- jsp -->
         <c:if test="${pageMaker != null}">
@@ -35,13 +35,13 @@
                         <c:otherwise>
                             <li class="page-item">
                                 <a class="page-link" href="../list?page=${pageMaker.criteria.page-1}" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
+                                    <span aria-hidden="true">Previous</span>
                                 </a>
                             </li>
                         </c:otherwise>
                     </c:choose>
         
-                    <!-- 페이지 번호 -->
+                    <!-- 페이지 번호, 현재 페이지에는 css를 달리 줌--> 
                     <c:forEach var="i" begin="1" end="${pageMaker.lastPage}">
                         <li class="page-item ${i == pageMaker.criteria.page ? 'active' : ''}">
                             <a class="page-link" href="../list?page=${i}">${i}</a>
@@ -58,7 +58,7 @@
                         <c:otherwise>
                             <li class="page-item">
                                 <a class="page-link" href="../list?page=${pageMaker.criteria.page+1}" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
+                                    <span aria-hidden="true">Next</span>
                                 </a>
                             </li>
                         </c:otherwise>
