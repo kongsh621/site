@@ -79,7 +79,6 @@ public class InfoBoardController {
 
         List<InfoBoardVO> sorted = infoBoardService.sortByType(map);
         int total = infoBoardService.getTotal(type);
-        log.info("total = {}", total);
 
         model.addAttribute("button", type);
         model.addAttribute("list", sorted);
@@ -277,30 +276,21 @@ public class InfoBoardController {
         try {
             result = infoBoardService.delete(id);
             if (!result){
-                ra.addAttribute("id", id);
-                ra.addAttribute("page", criteria.getPage());
-                ra.addAttribute("message", "게시물을 삭제하지 못했습니다.");
-                return "redirect:/infoboard/read/";
+                return redirect.sendRedirect(ra, id, criteria, "게시물을 삭제하지 못했습니다.", "/infoboard/read/");
             } else {
-                ra.addAttribute("page", criteria.getPage());
-                ra.addAttribute("message", "게시물이 삭제되었습니다.");
                 ra.addFlashAttribute("result", new ResultDTO(true, "infoDelete"));
-                return "redirect:/infoboard/";
+                return redirect.sendRedirect(ra, id, criteria, "게시물이 삭제되었습니다.", "/infoboard/");
             }
         } catch (Exception e){
-            ra.addAttribute("page", criteria.getPage());
-            ra.addAttribute("message", "시스템에 문제가 발생했습니다");
-            return "redirect:/infoboard/";
+            return redirect.sendRedirect(ra, null, criteria, "시스템에 문제가 발생했습니다", "/infoboard/");
         }
     }
-
 
     @GetMapping("/like")
     public String change_is_like(@ModelAttribute JjimVO jjimVO, RedirectAttributes ra, Model model,
                                  @SessionAttribute(name = "loginMember", required = false) MemberVO loginMember,
-                                 HttpSession session, Criteria criteria, HttpServletRequest request){
+                                 HttpSession session, Criteria criteria){
         model.addAttribute("loginSession", loginMember);
-        System.out.println("JjimVO = " + jjimVO);
 
         try {
             // 찜 테이블에 존재하는지 확인
