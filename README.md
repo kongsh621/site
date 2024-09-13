@@ -1,3 +1,31 @@
+스프링부트를 이용한 사이트 만들기 프로젝트
+
+프로젝트 목적
+: 정보를 공유하고 이에 대해 함께 이야기할 수 있는 공간을 만듦
+
+주요 목표
+: 검색이 가능한 정보 게시판
+  평점에 따라 구성되는 추천 게시판
+  사진을 업로드 할 수 있는 자유 게시판이 있는 사이트 만들기
+
+<사용 기술>
+백엔드
+-Spring Boot
+-Spring Web
+-Spring Security
+-Lombok
+-Mybatis
+
+프론트엔드
+-JSP
+-AJAX (일부 기능)
+-JSON
+-부트스트랩
+
+
+ERD
+https://blog.kakaocdn.net/dn/3q5Bm/btsJBPzQr0O/xsVkcoSUNnyEMoTtDZXuO1/img.png
+
 주요 기능별 코드 정리
 
 카카오 로그인 연동
