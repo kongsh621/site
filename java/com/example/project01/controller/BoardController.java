@@ -305,7 +305,6 @@ public class BoardController {
                 model.addAttribute("pageMaker", new PageMaker(criteria, total));
                 return "siteForMember";
             }
-            model.addAttribute("emptyResult", "Y");
             return "siteForMember";
         } catch (Exception e) {
             return redirectMessage.sendRedirectExceptId(ra, "시스템에 문제가 발생했습니다.", "/list");
