@@ -13,13 +13,15 @@
 
     </head>
     <body>
-        <!-- 페이징  -->
+        <!-- 인포보드 페이징  -->
 
 <div class="card-footer">
     <div class="row col-12">
         <div class="justify-content-left offset-1">
             <p id=pageInfo><strong>
-                ${commentPageMaker.criteria.page} / ${commentPageMaker.lastPage}
+                <c:if test="${pageMaker.lastPage != 1}">
+                    ${pageMaker.criteria.page} / ${pageMaker.lastPage}
+                </c:if>
             </strong></p>
         </div>
         <!-- jsp -->
@@ -34,19 +36,39 @@
                             </li>
                         </c:when>
                         <c:otherwise>
-                            <li class="page-item">
-                                <a class="page-link" href="?id=${id}&page=${pageMaker.criteria.page - 1}" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
+                            <c:choose>
+                                <c:when test="empty button">
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=${pageMaker.criteria.page - 1}" aria-label="Previous">
+                                            <span aria-hidden="true">Previous</span>
+                                        </a>
+                                    </li>
+                                </c:when>
+                                <c:otherwise> <!--정렬 버튼 눌렀을 때-->
+                                    <li class="page-item"></li>
+                                        <a class="page-link" href="?type=${button}&page=${pageMaker.criteria.page - 1}" aria-label="Previous">
+                                            <span aria-hidden="true">Previous</span>
+                                        </a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
                         </c:otherwise>
                     </c:choose>
         
                     <!-- 페이지 번호 -->
                     <c:forEach var="i" begin="1" end="${pageMaker.lastPage}">
-                        <li class="page-item ${i == pageMaker.criteria.page ? 'active' : ''}">
-                            <a class="page-link" href="?id=${id}&page=${i}">${i}</a>
-                        </li>
+                        <c:choose>
+                            <c:when test="empty button">
+                                <li class="page-item ${i == pageMaker.criteria.page ? 'active' : ''}">
+                                    <a class="page-link" href="?page=${i}">${i}</a>
+                                </li>
+                            </c:when>
+                            <c:otherwise> <!--정렬 버튼 눌렀을 때-->
+                                <li class="page-item ${i == pageMaker.criteria.page ? 'active' : ''}">
+                                    <a class="page-link" href="?type=${button}&page=${i}">${i}</a>
+                                </li>
+                            </c:otherwise>
+                        </c:choose>
                     </c:forEach>
         
                     <!-- Next 버튼 -->
@@ -57,11 +79,22 @@
                             </li>
                         </c:when>
                         <c:otherwise>
-                            <li class="page-item">
-                                <a class="page-link" href="?id=${id}&page=${pageMaker.criteria.page + 1}" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
+                            <c:choose>
+                                <c:when test="empty button">
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=${pageMaker.criteria.page + 1}" aria-label="Next">
+                                            <span aria-hidden="true">Next</span>
+                                        </a>
+                                    </li>
+                                </c:when>
+                                <c:otherwise> <!--정렬 버튼 눌렀을 때-->
+                                    <li class="page-item">
+                                        <a class="page-link" href="?type=${button}&page=${pageMaker.criteria.page + 1}" aria-label="Next">
+                                            <span aria-hidden="true">Next</span>
+                                        </a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
                         </c:otherwise>
                     </c:choose>
                 </ul>
@@ -73,7 +106,6 @@
     </div>
 </div>
     <!-- 페이징 끝 -->
-    <!-- js로 disabled 같은 것만 넣고 나머지는 그냥 jsp랑 서버에서 처리하자-->
 
 
     </body>
