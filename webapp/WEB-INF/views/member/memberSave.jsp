@@ -11,35 +11,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
-
-
+<style>
+    .error-message {
+        display: none;
+    }
+ 
+    /* 또는 span 태그 자체를 none으로 설정해둬도 된다 */
+</style>
     <script>
-             $(document).ready(function() {
-                       $('#idCheck').click(function() {
-                              const email = $('#email').val();
-
-                              if (!email) {
-                                  alert("이메일을 입력해 주세요.");
-                                  return;
-                              }
-                              $.ajax({
-                                  type: "GET",
-                                  url: "/member/idcheck",
-                                  data: {
-                                      email: email
-                                  },
-                                  success: function(response) {
-                                      // AJAX 요청의 성공 시, HTML을 파싱하여 메시지를 추출
-                                      var tempDiv = $('<div>').html(response);
-                                      var message = tempDiv.find('p').text();
-                                      alert(message);
-                                  },
-                                    error: function(xhr, status, error) {
-                                      alert("값을 가져오지 못했습니다. 상태: " + status + " 오류: " + error);
-                                  }
-                               });
-                           });
-                       });
+            
    </script>
 </head>
 <body>
@@ -49,49 +29,57 @@
                 <div class="card">
                   <div class="card-header">회원가입</div>
                     <div class="card-body">
-                        <form action="/member/save" method="Post">
+                        <form action="/member/save" method="Post" id="sign-up">
                             <div class="form-group row">
-                                <label for="email" class="col-md-4 col-form-label text-md-right">이메일</label>
+                                <label for="email" class="col-md-4 col-form-label text-md-right">*이메일</label>
                                     <div class="col-md-5">
                                         <input type="text" id="email" class="form-control" name="email" placeholder="example@naver.com" required autofocus>
 
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="button" id="idCheck" name="idCheck">아이디 중복 검사</button>
                                     </span>
+                                    <span id="emailEmptyError" class="error-message">이메일을 입력해 주세요.</span>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="password" class="col-md-4 col-form-label text-md-right">비밀번호</label>
+                                <label for="password" class="col-md-4 col-form-label text-md-right">*비밀번호</label>
                                 <div class="col-md-5">
                                     <input type="password" id="password" class="form-control" name="password" placeholder="비밀번호"required>
+                                    <span id="passwordEmptyError" class="error-message">비밀번호를 입력해 주세요.</span>
+                                    <span id="passwordLengthError" class="error-message">비밀번호를 8글자 이상 입력해 주세요.</span>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="passwordCheck" class="col-md-4 col-form-label text-md-right">비밀번호 확인</label>
+                                <label for="passwordCheck" class="col-md-4 col-form-label text-md-right">*비밀번호 확인</label>
                                 <div class="col-md-5">
                                     <input type="password" id="passwordCheck" class="form-control" name="passwordCheck" placeholder="비밀번호 확인"required>
+                                    <span id="passwordCheckEmptyError" class="error-message">비밀번호 확인을 입력해 주세요.</span>
+                                    <span id="passwordCheckIncorrectError" class="error-message">비밀번호 확인이 일치하지 않습니다.</span>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="name" class="col-md-4 col-form-label text-md-right">이름</label>
+                                <label for="name" class="col-md-4 col-form-label text-md-right">*이름</label>
                                 <div class="col-md-5">
                                     <input type="text" id="name" class="form-control" name="name" placeholder="이름"required>
+                                    <span id="nameEmptyError" class="error-message">이름을 입력해 주세요.</span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="nickname" class="col-md-4 col-form-label text-md-right">닉네임</label>
+                                <label for="nickname" class="col-md-4 col-form-label text-md-right">*닉네임</label>
                                 <div class="col-md-5">
                                     <input type="text" id="nickname" class="form-control" name="nickname" placeholder="닉네임"required>
+                                    <span id="nicknameEmptyError" class="error-message">닉네임을 입력해 주세요.</span>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="age" class="col-md-4 col-form-label text-md-right">연령</label>
+                                <label for="age" class="col-md-4 col-form-label text-md-right">*나이</label>
                                 <div class="col-md-5">
-                                    <input type="text" id="age" class="form-control" name="age" placeholder="연령"required>
+                                    <input type="text" id="age" class="form-control" name="age" placeholder="나이" required>
+                                    <span id="ageEmptyError" class="error-message">나이를 입력해 주세요.</span>
                                 </div>
                             </div>
 
@@ -108,7 +96,7 @@
                             </div> -->
 
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button  disabled="disabled" id="submitButton" type="submit" class="btn btn-primary">
                                     회원가입
                                 </button>
                             </div>
@@ -120,6 +108,7 @@
         </div>
     </div>
 
+    <script src="${pageContext.request.contextPath}/js/register.js"></script>
 
     <%@ include file="/WEB-INF/views/fragment/footer2.jsp" %>
 
