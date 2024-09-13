@@ -30,39 +30,37 @@
                                 </div>
                             </div>
                             <div class="card-body">
-<c:choose>
-    <c:when test="${empty idCheck}">
-                                <form action="/member/idfind" method="Post">
-                                    <div class="form-group row">
-                                        <label for="name" class="col-md-4 col-form-label text-md-right">이름</label>
-                                        <div class="col-md-6">
-                                            <input type="text" id="name" class="form-control" name="name" placeholder="이름"required>
+                                <c:choose>
+                                    <c:when test="${empty idCheck}">
+                                        <form action="/member/idfind" method="Post">
+                                            <div class="form-group row">
+                                                <label for="name" class="col-md-4 col-form-label text-md-right">이름</label>
+                                                <div class="col-md-6">
+                                                    <input type="text" id="name" class="form-control" name="name" placeholder="이름"required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 offset-md-4">
+                                                <button type="submit" class="btn btn-primary">
+                                                    찾기
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                아이디는 ${idCheck}입니다.
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6 offset-md-4">
-                                        <button type="submit" class="btn btn-primary">
-                                            찾기
-                                        </button>
-                                    </div>
-                                </form>
-    </c:when>
-    <c:otherwise>
-                                    <div class="form-group row">
-                                        <div class="col-md-10">
-                                            아이디는 ${idCheck}입니다.
+                                        <div class="col-md-6 offset-md-4">
+                                            <a href="/member/login"><button class="btn btn-primary">로그인</button></a>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6 offset-md-4">
-                                        <a href="/member/login"><button class="btn btn-primary">로그인</button></a>
-                                    </div>
-                                <div>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
-    </c:otherwise>
-</c:choose>
                         </div>
                     </div>
                 </div>
-            </div>
             </div>
 <%@ include file="/WEB-INF/views/fragment/footer2.jsp" %>
 
