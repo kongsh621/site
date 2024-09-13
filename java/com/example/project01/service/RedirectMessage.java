@@ -16,7 +16,6 @@ public class RedirectMessage {
             ra.addAttribute("page", criteria.getPage());
             return "redirect:" + redirectUrl;
         }
-        // 댓글 페이지는?
         return "redirect:/";
     }
     // id 없는 버전 (로그인) ajax로 위치 읽어와서 페이지 포함
