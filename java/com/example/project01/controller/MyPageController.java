@@ -4,6 +4,7 @@ import com.example.project01.domain.*;
 import com.example.project01.service.BoardService;
 import com.example.project01.service.MemberService;
 import com.example.project01.service.MyPageService;
+import com.example.project01.service.RedirectMessage;
 import com.oracle.wls.shaded.org.apache.xpath.operations.Mod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -20,18 +21,22 @@ import java.util.List;
 public class MyPageController {
     @Autowired
     private MemberService memberService;
+
     @Autowired
     private MyPageService myPageService;
 
+    @Autowired
+    private RedirectMessage redirectMessage;
+
     @GetMapping("/")
-    public String index(@ModelAttribute MemberVO memberVO, @SessionAttribute(name="loginMember", required = false) MemberVO loginMember,
+    public String index(@SessionAttribute(name="loginMember", required = false) MemberVO loginMember,
                         Model model, HttpServletRequest request){
         // 로그인 상태 아니라면 메인으로 리다이렉트
         if (loginMember == null)
             return "redirect:/";
+
         model.addAttribute("loginSession", loginMember);
         model.addAttribute("member", loginMember);
-        System.out.println("로그인 된 아이디 " + loginMember);
 
         if (loginMember.getEmail() != null && loginMember.getEmail().toLowerCase().contains("kakao.login")) {
             model.addAttribute("kakaoLogin", loginMember);
@@ -54,13 +59,11 @@ public class MyPageController {
             return "redirect:/";
 
         model.addAttribute("loginSession", loginMember);
-
-
         return "mypage/setpass";
     }
     @PostMapping("/setpass")
     public String setPass(@SessionAttribute(name = "loginMember", required = false)MemberVO loginMember, Model model,
-                          @ModelAttribute PassCheck member, RedirectAttributes redirectAttributes){
+                          @ModelAttribute PassCheck member, RedirectAttributes ra){
         // 로그인 상태 아니라면 메인으로 리다이렉트
         if (loginMember == null)
             return "redirect:/";
@@ -71,41 +74,21 @@ public class MyPageController {
         try {
             // 비밀번호 유효성 검사
             if (!loginMember.getPassword().equals(member.getPassword())){ // 기존 비밀번호 불일치
-                redirectAttributes.addAttribute("message", "기존 비밀번호와 일치하지 않습니다.");
-                return "redirect:/mypage/setpass";
+                return redirectMessage.sendRedirectExceptId(ra, "기존 비밀번호와 일치하지 않습니다.", "/mypage/setpass");
             } else { // 기존은 일치
                 if (!member.getNewPass().equals(member.getNewPassCheck())){
-                    redirectAttributes.addAttribute("message", "비밀번호 확인에 동일한 값을 입력해주세요.");
-                    return "redirect:/mypage/setpass";
+                    return redirectMessage.sendRedirectExceptId(ra, "비밀번호 확인에 동일한 값을 입력해주세요.", "/mypage/setpass");
                 } else if (member.getNewPass().equals(loginMember.getPassword())) {
-                        redirectAttributes.addAttribute("message", "기존 비밀번호와 다른 비밀번호를 입력해 주세요.");
-                        return "redirect:/mypage/setpass";
+                    return redirectMessage.sendRedirectExceptId(ra, "기존 비밀번호와 다른 비밀번호를 입력해 주세요.", "/mypage/setpass");
                 } else if (!result) {
-                    redirectAttributes.addAttribute("message", "비밀번호 변경에 실패하였습니다.");
-                    return "redirect:/mypage";
+                    return redirectMessage.sendRedirectExceptId(ra, "비밀번호 변경에 실패하였습니다.", "/mypage/");
                 }
             }
         } catch (Exception e) {
-            redirectAttributes.addAttribute("message", "시스템에 문제가 발생했습니다");
-            return "redirect:/member/passfind";
+            return redirectMessage.sendRedirectExceptId(ra, "시스템에 문제가 발생했습니다.", "/mypage/");
         }
-        redirectAttributes.addAttribute("message",
-            "변경된 비밀번호로 로그인 해주시기 바랍니다.");
-        return "redirect:/member/login";
+        return redirectMessage.sendRedirectExceptId(ra, "변경된 비밀번호로 로그인 해주시기 바랍니다.", "/member/login");
     }
-/*    @GetMapping("/delete")
-    public String delete(@SessionAttribute(name = "loginMember", required = false) MemberVO loginMember, Model model,
-                         RedirectAttributes redirectAttributes, HttpSession session) {
-        model.addAttribute("loginSession", loginMember);
-
-        System.out.println("delete");
-        if (memberService.delete(loginMember.getId()))
-            redirectAttributes.addFlashAttribute("result", new ResultDTO(true, "delete"));
-
-        System.out.println("delete");
-        session.invalidate();
-        return "redirect:/";
-    }*/
 
     @GetMapping("/mypost")
     public String seeMyPost(Criteria criteria, Model model, @SessionAttribute(name = "loginMember", required = false)MemberVO loginMember){
@@ -115,11 +98,7 @@ public class MyPageController {
 
         model.addAttribute("loginSession", loginMember);
 
-        System.out.println("criteria =======" + criteria);
-        criteria.setWriter(loginMember.getNickname()); // nickname 가져와서 BoardVO 에 담아 검색 (writer = nickname)
-        System.out.println("nickname ---------" + loginMember.getNickname());
-        System.out.println("criteria 후 ========= " + criteria);
-
+        criteria.setWriter(loginMember.getNickname());
         long total = myPageService.getTotalPost(criteria);
 
         if (total != 0){
@@ -127,7 +106,6 @@ public class MyPageController {
         }
         model.addAttribute("list", myPageService.getMyPost(criteria));
         model.addAttribute("pageMaker", new PageMaker(criteria, total));
-
         return "mypage/mypost";
     }
 
@@ -141,11 +119,10 @@ public class MyPageController {
 
         criteria.setWriter(loginMember.getNickname());
         List<BoardCommentVO> result = myPageService.getMyComment(criteria);
-        System.out.println("result=======" + result);
         long total = myPageService.getTotalComment(criteria);
+
         model.addAttribute("list", result);
         model.addAttribute("pageMaker", new PageMaker(criteria, total));
-
         return "mypage/mycomment";
     }
 }
