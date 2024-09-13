@@ -56,35 +56,43 @@
                     
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>id</th>
-                                        <th>제목</th>
-                                        <th>작성자</th>
-                                        <th>작성일</th>
-                                        <th>조회수</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <c:forEach var="board" items="${list}">
-                                    <tr>
-                                        <td>
-                                            <c:if test="${not empty admin}">
-                                                <a href="/delete?id=${board.id}">    
-                                                    <button class="ml-1" id="adminDelete" onclick="unlinkApp()" data-href="/delete?id=${board.id}"><span>X</span></button>
-                                                </a>    
-                                            </c:if>
-                                            ${board.id} 
-                                        </td>
-                                        <td><a href="../read?id=${board.id}&page=${pageMaker.criteria.page}">${board.title}</a></td>
-                                        <td>${board.writer}</td>
-                                        <td>${board.regdate}</td>
-                                        <td>${board.hits}</td>
-                                    </tr>
-                                </c:forEach>
-                                </tbody>
-                            </table>
+                            <c:choose>
+                                <c:when test="empty emptyResult">
+                                    <h1>검색 결과가 존재하지 않습니다.</h1>
+                                </c:when>
+                                <c:otherwise>
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>id</th>
+                                                <th>제목</th>
+                                                <th>작성자</th>
+                                                <th>작성일</th>
+                                                <th>조회수</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach var="board" items="${list}">
+                                            <tr>
+                                                <td>
+                                                    <c:if test="${not empty admin}">
+                                                        <a href="/delete?id=${board.id}">    
+                                                            <button class="ml-1" id="adminDelete" onclick="unlinkApp()" data-href="/delete?id=${board.id}"><span>X</span></button>
+                                                        </a>    
+                                                    </c:if>
+                                                    ${board.id} 
+                                                </td>
+                                                <td><a href="../read?id=${board.id}&page=${pageMaker.criteria.page}">${board.title}</a></td>
+                                                <td>${board.writer}</td>
+                                                <td>${board.regdate}</td>
+                                                <td>${board.hits}</td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </c:otherwise>
+                            </c:choose>
+                        
                             <script>
                                 async function unlinkApp() {
                                     event.preventDefault(); // 기본 링크 이동을 막음
@@ -95,22 +103,8 @@
                                        window.location.href = href;          
                                     }                       
                                 }
-                                    
-                            // $(document).ready(function() {
-                            //     $('#adminDelete').on('click', function(event) {
-                            //         event.preventDefault(); // 기본 링크 이동을 막음
-                            //         console.log('버튼 클릭');
-
-                            //         // 확인 대화상자 표시
-                            //         if (window.confirm('삭제하시겠습니까?')) {
-                            //             // '예'를 클릭한 경우 data-href에 담긴 링크로 이동
-                            //             var deleteUrl = $(this).data('href');
-                            //             window.location.href = deleteUrl;
-                            //         }
-                            //     });
-                            // });
+                
                             </script>
-
 
                               <!-- 페이징  -->
                     <%@ include file="/WEB-INF/views/fragment/paginationMemberBoard.jsp" %>
@@ -168,13 +162,5 @@ aria-hidden="true">
 </div>
 <%@ include file="/WEB-INF/views/fragment/footer2.jsp" %>
 
-<!-- 추가로 -->
-<!-- DataTables 라이브러리 로드 -->
-<!-- <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script> -->
-<!-- Page level plugins-->
-<!-- <script src="../vendor/datatables/jquery.dataTables.min.js"></script> -->
-<!-- <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
-<!-- Page level custom scripts -->
-<!-- <script src="../js/demo/datatables-demo.js"></script>  -->
     </body>
 </html>
