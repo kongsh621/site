@@ -1,27 +1,27 @@
 스프링부트를 이용한 사이트 만들기 프로젝트
-
-프로젝트 목적
-: 정보를 공유하고 이에 대해 함께 이야기할 수 있는 공간을 만듦
-
-주요 목표
-: 검색이 가능한 정보 게시판
-  평점에 따라 구성되는 추천 게시판
-  사진을 업로드 할 수 있는 자유 게시판이 있는 사이트 만들기
-
-<사용 기술>
-백엔드
--Spring Boot
--Spring Web
--Spring Security
--Lombok
--Mybatis
-
-프론트엔드
--JSP
--AJAX (일부 기능)
--JSON
--부트스트랩
-
+<br><br>
+프로젝트 목적<br>
+: 정보를 공유하고 이에 대해 함께 이야기할 수 있는 공간을 만듦<br>
+<br><br>
+주요 목표<br>
+: 검색이 가능한 정보 게시판<br>
+  평점에 따라 구성되는 추천 게시판<br>
+  사진을 업로드 할 수 있는 자유 게시판이 있는 사이트 만들기<br>
+<br><br>
+<사용 기술><br>
+백엔드<br>
+-Spring Boot<br>
+-Spring Web<br>
+-Spring Security<br>
+-Lombok<br>
+-Mybatis<br>
+<br><br>
+프론트엔드<br>
+-JSP<br>
+-AJAX (일부 기능)<br>
+-JSON<br>
+-부트스트랩<br>
+<br>
 
 ERD
 https://blog.kakaocdn.net/dn/3q5Bm/btsJBPzQr0O/xsVkcoSUNnyEMoTtDZXuO1/img.png
