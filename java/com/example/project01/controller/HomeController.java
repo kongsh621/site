@@ -2,6 +2,7 @@ package com.example.project01.controller;
 
 import com.example.project01.domain.*;
 import com.example.project01.service.InfoBoardService;
+import com.example.project01.service.RedirectMessage;
 import com.example.project01.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -26,6 +27,9 @@ public class HomeController {
     @Autowired
     private InfoBoardService infoBoardService;
 
+    @Autowired
+    private RedirectMessage redirectMessage;
+
     @GetMapping({"/", "/index"})
     public String index(Model model, MemberVO memberVO, @SessionAttribute(name = "loginMember", required= false) MemberVO loginMember,
                         @SessionAttribute(name = "favorites", required = false) Set<JjimVO> favorites, Criteria criteria,
@@ -33,28 +37,24 @@ public class HomeController {
         System.out.println("index");
         model.addAttribute("loginSession", loginMember);
         model.addAttribute("loginMember", loginMember);
-        model.addAttribute("favorites", favorites);
-        // 세션에 현재 위치 저장 -> 찜 삭제 했을 때 다시 돌아오기 위함
+
+        // 세션에 현재 위치 저장
         HttpSession session = request.getSession();
         session.setAttribute("previousPage", request.getRequestURI());
 
         List<InfoBoardVO> list = infoBoardService.getRecommendList();
 
-        System.out.println("Main List " + list);
         model.addAttribute("list", list);
         model.addAttribute("pageMaker", new PageMaker(criteria, 8)); // 8개 출력
-
         return "mainview";
     }
 
     @GetMapping("/logout")
-    public String logout (HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+    public String logout (HttpServletRequest request, Model model, RedirectAttributes ra) {
         HttpSession session = request.getSession(false); // 세션 값 받고 (기존 세션 반환, 없으면 null 반환)
             // 세션 전체 무효화
-            session.invalidate();
-            redirectAttributes.addAttribute("message", "로그아웃 되었습니다");
-            System.out.println("로그아웃 되었습니다.");
-        return "redirect:/index";
+        session.invalidate();
+        return redirectMessage.sendRedirectExceptId(ra, "로그아웃 되었습니다", "/");
     }
 
 }
