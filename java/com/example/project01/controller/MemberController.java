@@ -351,8 +351,8 @@ public class MemberController {
     @GetMapping("/notifyDeleted")
     public ResponseEntity<String> notifyUserDeleted(@SessionAttribute(name = "loginMember", required = false) MemberVO loginMember) {
         if (loginMember == null) {
-            // 로그인된 사용자가 없는 경우, 적절한 메시지 반환
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자가 로그인되어 있지 않습니다.");
+            // 로그인된 사용자가 없는 경우 오류 메시지
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인되어 있지 않습니다.");
         }
 
         System.out.println("탈퇴하려는 카카오 유저 id: " + loginMember.getId());
@@ -363,7 +363,7 @@ public class MemberController {
             System.out.println("사이트에서의 id = " + deletedUser + " 탈퇴 처리가 완료되었습니다.");
             return ResponseEntity.ok("탈퇴 처리가 완료되었습니다.");
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시스템 오류로 정상적으로 탈퇴되지 않았습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시스템에 문제가 발생했습니다.");
         }
     }
 
@@ -433,26 +433,26 @@ public class MemberController {
 
     @PostMapping("/setnewpass")
     public String setNewPass(@SessionAttribute(name = "updatePass", required = false) MemberVO updatePass,
-                             @ModelAttribute PassCheck passCheck, HttpSession session, RedirectAttributes ra) {
-        try {
-            String orignalPw = passwordEncoder.encode(passCheck.getPassword()); // 인코딩 된 비밀번호
+                             @ModelAttribute PassCheck passCheck, RedirectAttributes ra, HttpSession session) {
+        if (updatePass == null)
+             return "redirect:/";
+        try{
             String newPw = passwordEncoder.encode(passCheck.getNewPass()); // 새 비밀번호 인코딩
 
             // 새 비밀번호 인코딩 후 담아서 업데이트
             boolean result = memberService.updatePass(new MemberVO(updatePass.getEmail(), newPw));
-//            if (passwordEncoder.matches(orignalPw, updatePass.getPassword())){
-            if (passwordEncoder.matches(passCheck.getPassword(), updatePass.getPassword())){
-                return redirectMessage.sendRedirectExceptId(ra, "기존 비밀번호와 다른 비밀번호를 입력해 주세요.", "/member/setnewpass");
 
+            if (passwordEncoder.matches(passCheck.getNewPass(), updatePass.getPassword())){
+                return redirectMessage.sendRedirectExceptId(ra, "기존 비밀번호와 다른 비밀번호를 입력해 주세요.", "/member/setnewpass");
             } else if (!passCheck.getNewPass().equals(passCheck.getNewPassCheck())){
                 return redirectMessage.sendRedirectExceptId(ra, "비밀번호가 일치하지 않습니다.", "/member/setnewpass");
-
             } else if (!result) {
                 return redirectMessage.sendRedirectExceptId(ra, "비밀번호 변경에 실패하였습니다.", "/member/passfind");
-            }
+            } else
+                session.removeAttribute("updatePass");
+                return redirectMessage.sendRedirectExceptId(ra, "변경된 비밀번호로 로그인 해주시기 바랍니다.", "/member/login");
         } catch (Exception e) {
             return redirectMessage.sendRedirectExceptId(ra, "시스템에 문제가 발생했습니다.", "/member/passfind");
         }
-        return redirectMessage.sendRedirectExceptId(ra, "변경된 비밀번호로 로그인 해주시기 바랍니다.", "/member/login");
     }
 }
