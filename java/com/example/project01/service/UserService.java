@@ -38,7 +38,7 @@ public class UserService {
         HashMap<String, Object> response = new HashMap<>();
         if (pageUrl != null && !pageUrl.containsValue("/login")){
             session.setAttribute("preLoginUrl", pageUrl.get("pageUrl"));
-            System.out.println("pageUrl.get(\"pageUrl\")" + pageUrl.get("pageUrl"));
+            System.out.println("pageUrl.get(\"pageUrl\") = " + pageUrl.get("pageUrl"));
             response.put("status", "success");
         } else {
             response.put("status", "failure");
@@ -69,26 +69,16 @@ public class UserService {
         if (email == null || password == null)
             return false;
 
-//        member.setEmail(email);
         // 이메일이 존재하면 인코딩 된 pw를 불러와서 비교
         String encodePw = mapper.findByEmail(email).getPassword();
         if (passwordEncoder.matches(password, encodePw)){
             // 암호화된 비밀번호와 일치하면 암호화된 비밀번호로 password 변경 후 로그인인데
             // 나는 mapper에 따로 로그인 메서드가 있는 게 아니라 일치 여부만 보내서 처리
-//            member.setPassword(encodePw);
             return true;
         } else {
             System.out.println("로그인 패스워드 인증 실패");
             return false;
         }
-
-        // 암호화 사용 전에 쓰던 로직
-//        MemberVO memberVO = mapper.findByEmail(email);
-//        if (memberVO != null){ // 이메일이 존재하면 패스워드 검증
-//        if (password != null && !password.isEmpty() && password.equals(memberVO.getPassword())) {
-//            System.out.println("로그인 인증로직 성공");
-//            return true;
-//        }
     }
 
     // 이메일 검사 메서드
@@ -97,14 +87,16 @@ public class UserService {
             return false;
         }
         if (mapper.findByEmail(email) != null){ // 중복 확인
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            return false;
+//            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
         return EMAIL_PATTERN.matcher(email).matches(); // 가입 검사 로직
     }
 
 
     public boolean registerUser(MemberVO memberVO){
-        // 이메일 유효성 검사나 기입 조건은 뷰에서 검사
+//        if (!isValidEmail(memberVO.getEmail())) // 이메일 유효성 검사 -> 중복검사 버튼 누를 때 한다
+//            return false;
         if (memberVO == null){
             System.out.println("회원가입에 실패했습니다. memberVO = " + memberVO);
             return false;
