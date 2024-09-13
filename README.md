@@ -23,9 +23,13 @@
 -부트스트랩<br>
 <br>
 
-ERD
-https://blog.kakaocdn.net/dn/3q5Bm/btsJBPzQr0O/xsVkcoSUNnyEMoTtDZXuO1/img.png
-
+ERD<br>
+https://blog.kakaocdn.net/dn/3q5Bm/btsJBPzQr0O/xsVkcoSUNnyEMoTtDZXuO1/img.png<br>
+<br>
+블로그<br>
+https://myblog7363.tistory.com/
+<br>
+<br>
 주요 기능별 코드 정리
 
 카카오 로그인 연동
