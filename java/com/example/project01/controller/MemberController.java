@@ -33,16 +33,12 @@ import java.util.Map;
 public class MemberController {
     @Autowired
     private MemberService memberService;
-    
     @Autowired
     private UserService userService;
-    
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
     @Autowired
     private RedirectMessage redirectMessage;
-    
     @Autowired
     private HomeController homeController;
 
@@ -75,6 +71,7 @@ public class MemberController {
             boolean result = userService.registerUser(member);
             if (!result) {
                 redirectAttributes.addAttribute("message", "회원가입에 실패하였습니다");
+
                 return "redirect:/member/save";
             }
         } catch (Exception e) {
@@ -94,17 +91,23 @@ public class MemberController {
         System.out.println("중복확인 email = " + member.getEmail());
         String message;
 
-        if (!isValidEmail) {
-            message = "사용할 수 없는 아이디입니다.";
-            return ResponseEntity.ok(new ResponseMessage(message));
-        } else if (isValidEmail){
-            message = "사용 가능한 아이디입니다.";
-            return ResponseEntity.ok(new ResponseMessage(message));
-        }
-        else {
-            message = "오류";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
-        }
+//            MemberVO memberVO = new MemberVO();
+//            memberVO.setEmail(email);
+//            userService.registerAuthenticate(memberVO); // 사용 중인 이메일이면 오류 메시지
+            if (!isValidEmail) {
+//                model.addAttribute("message", "사용할 수 없는 아이디입니다.");
+                message = "사용할 수 없는 아이디입니다.";
+                return ResponseEntity.ok(new ResponseMessage(message));
+            } else if (isValidEmail){
+                message = "사용 가능한 아이디입니다.";
+                return ResponseEntity.ok(new ResponseMessage(message));
+            }
+            else {
+//                model.addAttribute("message", "사용 가능한 아이디입니다.");
+                message = "오류";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+            }
+
     }
 
     public static class ResponseMessage{
@@ -114,8 +117,13 @@ public class MemberController {
             System.out.println("message" + message);
         }
 
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
     @GetMapping("/login")
@@ -132,6 +140,8 @@ public class MemberController {
                                Criteria criteria) {
         model.addAttribute("loginSession", loginMember);
 
+
+        // 아이디 저장 기능
         // 아이디 저장 버튼 클릭시 쿠키에 담아 보관
         Cookie cookie = new Cookie("saveId", memberVO.getEmail());
         cookie.setPath("/"); // 쿠키를 담아줄 경로 -> 메인 페이지 + 모든 하위 주소
@@ -149,7 +159,6 @@ public class MemberController {
             if (isAuthenticated){
                 HttpSession session = request.getSession();
                 String redirectUrl = userService.getRedirectUrlAfterLogin(session);
-                
                 if (redirectUrl.length() > 21){
                     redirectUrl = redirectUrl.substring(21);
                 }
@@ -161,6 +170,8 @@ public class MemberController {
                 return "redirect:/member/login";
             }
         } catch (Exception e){
+            // 예외를 로깅하거나 적절히 처리
+//            e.printStackTrace(); // 콘솔에 스택 트레이스 출력
             ra.addAttribute("message", "시스템에 문제가 발생했습니다");
             return "redirect:/member/login";
         }
@@ -205,7 +216,7 @@ public class MemberController {
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
             new HttpEntity<>(params, headers);
 
-        // HTTP 요청 후 response 의 응답 받음
+        // HTTP 요청하기 POST 방식으로, 그리고 response 의 응답 받음
         ResponseEntity<String> response = rt.exchange(
             "https://kauth.kakao.com/oauth/token",
             HttpMethod.POST,
@@ -229,13 +240,16 @@ public class MemberController {
 
         RestTemplate rt2 = new RestTemplate();
 
+        // HTTP Header 오브젝트 생성
         HttpHeaders headers2 = new HttpHeaders();
         headers2.add("Authorization", "Bearer " + oauthToken.getAccess_token());
         headers2.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
+        // HTTP Header와 Body를 한 오브젝트에 담기
         HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest2 =
             new HttpEntity<>(headers2); //이미 오버로딩이 되어있어서 param 안 넣고 헤더만 넣어도 만들어진다
 
+        // HTTP 요청하기 POST 방식으로, 그리고 response 의 응답 받음
         ResponseEntity<String> response2 = rt2.exchange(
             "https://kapi.kakao.com/v2/user/me",
             HttpMethod.POST,
@@ -254,6 +268,7 @@ public class MemberController {
         }
 
         MemberVO kakaoUser = userService.setUserForKakao(kakaoProfile);
+
         boolean originUser = userService.isValidEmailForKakao(kakaoProfile);
         // 가입자 혹은 비가입자 체크해서 처리
         // 비가입자는 회원가입부터
@@ -273,6 +288,7 @@ public class MemberController {
         if (loginAuth){
             String redirectUrl = userService.getRedirectUrlAfterLogin(session);
             session.setAttribute("loginMember", memberService.selectMember(kakaoUser)); // 세션에 로그인 정보 저장
+
             return redirectMessage.sendRedirectExceptId(ra, "로그인 되었습니다.", "redirect:" + redirectUrl);
         }
         ra.addAttribute("message", "로그인에 실패했습니다.");
@@ -284,7 +300,7 @@ public class MemberController {
                          Model model) {
         model.addAttribute("loginSession", loginMember);
         model.addAttribute("member", loginMember);
-        
+        System.out.println("------------------loginMember: " + loginMember);
         if (loginMember.getEmail() != null && loginMember.getEmail().toLowerCase().contains("kakao.login")) {
             model.addAttribute("kakaoLogin", loginMember);
             // 카카오 계정일 땐 비밀번호 변경할 수 없고 수정 가능 내용이 달라서 모델 객체로 보내준다.
@@ -342,15 +358,17 @@ public class MemberController {
             System.out.println("탈퇴 완료");
             session.invalidate();
         }
-        else 
-            ra.addAttribute("message", "계정이 삭제되지 않았습니다.");
+        else ra.addAttribute("message", "계정이 삭제되지 않았습니다.");
+
         return "redirect:/";
     }
 
     // 카카오 회원 탈퇴시 알림
     @ResponseBody
     @GetMapping("/notifyDeleted")
-    public ResponseEntity<String> notifyUserDeleted(@SessionAttribute(name = "loginMember", required = false) MemberVO loginMember) {
+    public ResponseEntity<String> notifyUserDeleted(
+        @SessionAttribute(name = "loginMember", required = false) MemberVO loginMember) {
+
         if (loginMember == null) {
             // 로그인된 사용자가 없는 경우, 적절한 메시지 반환
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자가 로그인되어 있지 않습니다.");
@@ -368,9 +386,12 @@ public class MemberController {
         }
     }
 
+
+
     // 아이디 찾기
     @GetMapping("/idfind")
     public String idFindForm(HttpSession session, Model model) {
+//        session.removeAttribute("findResult"); // 이전 세션 지워줌
         return "member/idfind";
     }
 
@@ -391,6 +412,7 @@ public class MemberController {
             redirectAttributes.addAttribute("message", "시스템에 문제가 발생했습니다.");
             return "redirect:/member/idfind";
         }
+//        session.setAttribute("findResult", result); // 저장해서 idfind.jsp로 다른 양식 출력
         model.addAttribute("idCheck", result);
         return "member/idfind";
     }
@@ -399,6 +421,7 @@ public class MemberController {
     @GetMapping("/passfind")
     public String passFindForm(@SessionAttribute(name = "loginMember", required = false) MemberVO loginMember, Model model) {
         model.addAttribute("loginSession", loginMember);
+
         return "member/passfind";
     }
 
@@ -408,10 +431,10 @@ public class MemberController {
                                 @RequestParam("inputCode") String input, HttpSession session,
                                 RedirectAttributes redirectAttributes, @SessionAttribute(name = "mailedPass", required = false) String mailedPass) {
         model.addAttribute("loginSession", loginMember);
+        System.out.println("update = " + memberVO.getEmail());
         MemberVO result = memberService.selectMember(memberVO);
         System.out.println("ePw" + mailedPass); // 세션에서 저장한 코드
         System.out.println("입력한 코드 " + input);
-        
         try {
             if (!input.equals(mailedPass)) {
                 redirectAttributes.addAttribute("message", "잘못된 인증번호입니다.");
@@ -428,15 +451,20 @@ public class MemberController {
         return "redirect:/member/setnewpass";
     }
 
+
     // 비밀번호 변경 (비밀번호 찾기)
     @GetMapping("/setnewpass")
     public String setNewPasswordForm(@SessionAttribute(name = "updatePass", required = false) MemberVO updatePass) {
+
         return "member/setnewpass";
     }
 
     @PostMapping("/setnewpass")
     public String setNewPass(@SessionAttribute(name = "updatePass", required = false) MemberVO updatePass,
                              @ModelAttribute PassCheck passCheck, HttpSession session, RedirectAttributes redirectAttributes) {
+
+        System.out.println("updatePass ======" + updatePass);
+        System.out.println("passCheck =====" + passCheck.getNewPass());
     try {
         String orignalPw = passwordEncoder.encode(passCheck.getPassword()); // 인코딩 된 비밀번호
         String newPw = passwordEncoder.encode(passCheck.getNewPass()); // 새 비밀번호 인코딩
@@ -460,5 +488,25 @@ public class MemberController {
     redirectAttributes.addAttribute("message",
         "변경된 비밀번호로 로그인 해주시기 바랍니다.");
     return "redirect:/member/login";
+
+ /*      비밀번호 암호화 사용 전 코드
+        boolean result = memberService.updatePass(new MemberVO(updatePass.getEmail(), passCheck.getNewPass()));
+        try {
+            if (passCheck.getNewPass().equals(updatePass.getPassword())){
+                redirectAttributes.addAttribute("message", "기존 비밀번호와 다른 비밀번호를 입력해 주세요.");
+                return "redirect:/member/setnewpass";
+            } else if (!passCheck.getNewPass().equals(passCheck.getNewPassCheck())) {
+                redirectAttributes.addAttribute("message", "비밀번호가 일치하지 않습니다.");
+                return "redirect:/member/setnewpass";
+            } else if (!result) {
+                redirectAttributes.addAttribute("message", "비밀번호 변경에 실패하였습니다.");
+                return "redirect:/member/passfind";
+            }
+
+        } catch (Exception e) {
+            redirectAttributes.addAttribute("message", "시스템에 문제가 발생했습니다");
+            return "redirect:/member/passfind";
+        }*/
     }
+
 }
