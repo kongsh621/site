@@ -115,7 +115,8 @@ public class UserService {
     // 카카오 회원가입
     public MemberDTO setUserForKakao(KakaoProfile kakaoProfile){
 //        UUID garbagePassword = UUID.randomUUID(); // 랜덤
-//        근데 시큐리티 암호화랑 연결해야 하는데 이렇게 하면 너무 길어져서 Random 클래스 사용
+//        근데 시큐리티 암호화랑 연결해야 하는데 UUID는 길이가 36자리라 이렇게 하면 너무 길어져서 Random 클래스 사용
+//        하지만 Random은 UUID과 달리 중복 가능성 문제가 있다.
         Random random = new Random();
         int pass = random.nextInt(1000) + 1000;
         System.out.println("아이디: " + kakaoProfile.getId());
