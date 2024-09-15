@@ -92,12 +92,10 @@ public class UserService {
 
 
     public boolean registerUser(MemberDTO memberDTO){
-//        if (!isValidEmail(memberVO.getEmail())) // 이메일 유효성 검사 -> 중복검사 버튼 누를 때 한다
-//            return false;
         if (memberDTO == null){
-            System.out.println("회원가입에 실패했습니다. memberVO = " + memberDTO);
+            System.out.println("회원가입에 실패했습니다. memberDTO = " + memberDTO);
             return false;
-        }
+        
         // 비밀번호 인코딩 후 가입
         memberDTO.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
         return mapper.save(memberDTO) == 1; // 암호화 해서 저장
