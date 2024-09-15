@@ -182,7 +182,7 @@ public class InfoBoardController {
                 return redirect.sendRedirect(ra, id, criteria, "로그인 후 이용하실 수 있습니다.","redirect:/infoboard/readinfo");
             }
 
-            // ratingsVO에 id 2개와 rating을 넣고 insert
+            // ratingsDTO에 id 2개와 rating을 넣고 insert
             RatingsDTO ratingsDTO = new RatingsDTO();
             ratingsDTO.setRating((double) infoBoardDTO.getRate());
             ratingsDTO.setBoard_id(id);
@@ -198,10 +198,10 @@ public class InfoBoardController {
                 return redirect.sendRedirect(ra, id, criteria, "평점이 반영되지 않았습니다.", "redirect:/infoboard/readinfo");
             }
 
-            System.out.println("InsertRating succeed");
-            System.out.println(infoBoardService.getRatingsList());
+            System.out.println("InsertRating");
+            System.out.println(infoBoardService.getRatingsList()); // 확인
 
-            // 작품별 평균 평점을 구한다 ( 평균(rating에), 작품당 평가인원(count에) 가져옴)
+            // 작품별 평균 평점을 구한다
             RatingsDTO getAvgByBoard = infoBoardService.getAvgByBoard(ratingsDTO.getBoard_id());
 
             // infoboardVO에 넣어 업데이트 후 화면으로 돌려보낸다
