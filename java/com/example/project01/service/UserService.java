@@ -70,8 +70,6 @@ public class UserService {
         // 이메일이 존재하면 인코딩 된 pw를 불러와서 비교
         String encodePw = mapper.findByEmail(email).getPassword();
         if (passwordEncoder.matches(password, encodePw)){
-            // 암호화된 비밀번호와 일치하면 암호화된 비밀번호로 password 변경 후 로그인인데
-            // 나는 mapper에 따로 로그인 메서드가 있는 게 아니라 일치 여부만 보내서 처리
             return true;
         } else {
             System.out.println("로그인 패스워드 인증 실패");
@@ -116,18 +114,12 @@ public class UserService {
 //        근데 시큐리티 암호화랑 연결해야 하는데 UUID는 길이가 36자리라 이렇게 하면 너무 길어져서 Random 클래스 사용
 //        하지만 Random은 UUID과 달리 중복 가능성 문제가 있다.
         Random random = new Random();
-        int pass = random.nextInt(1000) + 1000;
-        System.out.println("아이디: " + kakaoProfile.getId());
-        System.out.println("닉네임: " + kakaoProfile.getProperties().getNickname());
-        System.out.println("서버 email: " + kakaoProfile.getId() + "@kakao.login");
-        System.out.println("서버 password: " + random.nextInt(1000) + 1000); // 1000~2000 사이 값으로 설정
-        System.out.println("서버 nickname: " + kakaoProfile.getProperties().getNickname());
-        System.out.println("서버 name: " + kakaoProfile.getProperties().getNickname());
+        int pass = random.nextInt(1000) + 1000; //1000~2000 사이 값으로 설정
 
         // memberVO 오브젝트 : email, password, nickname, name, age
         MemberDTO kakaoUser = new MemberDTO();
-        kakaoUser.setEmail(kakaoProfile.getId() + "@kakao.login"); // email을 받아오지 못하는데 아이디가 이메일 형식이라서 임시로
-        kakaoUser.setPassword(passwordEncoder.encode(Integer.toString(pass))); // int를 String으로 변환해서 설정
+        kakaoUser.setEmail(kakaoProfile.getId() + "@kakao.login"); // email을 받아오지 못하는데 아이디를 이메일 형식으로 할 거라 임시 계정 생성
+        kakaoUser.setPassword(passwordEncoder.encode(Integer.toString(pass))); 
         kakaoUser.setNickname(kakaoProfile.getProperties().getNickname());
         kakaoUser.setName(""); // 임시
         kakaoUser.setAge(0); // 임시
@@ -143,7 +135,7 @@ public class UserService {
             return false;
 
         if (mapper.findByEmail(email) == null) {
-            System.out.println("존재하지 않는 아이디 -> 회원가입으로 연결"); // 안 함
+            System.out.println("존재하지 않는 아이디 -> 회원가입으로 연결"); 
             return false;
         }
         System.out.println("로그인 패스워드 검증 완료");
