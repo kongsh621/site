@@ -53,11 +53,8 @@ https://github.com/kongsh621/site/blob/bce467289d5faff26ab2f21bdcd0fd020bedcf3e/
 https://github.com/kongsh621/site/blob/85166c38b687c93cbfb77936f59c7d9e427f32b9/js/register.js?plain=1#L29-L181<br>
 
 -비밀번호 암호화와 로그인 인증 로직<br>
-https://github.com/kongsh621/site/blob/748f36c4ecdfec0ab081aea1550a864fc19cd399/java/com/example/project01/service/UserService.java?plain=1#L94-L101<br>
-https://github.com/kongsh621/site/blob/748f36c4ecdfec0ab081aea1550a864fc19cd399/java/com/example/project01/service/UserService.java?plain=1#L64-L80<br>
-
--BCryptPasswordEncoder 빈 등록 및 시큐리티 설정<br>
-https://github.com/kongsh621/site/blob/b2eda5e0f9771ffdd866530d9ed36c31209781c9/java/com/example/project01/Config/SecurityConfig.java?plain=1#L17-L35<br>
+https://github.com/kongsh621/site/blob/bce467289d5faff26ab2f21bdcd0fd020bedcf3e/java/com/example/project01/service/UserService.java?plain=1#L97-L109<br>
+https://github.com/kongsh621/site/blob/bce467289d5faff26ab2f21bdcd0fd020bedcf3e/java/com/example/project01/service/UserService.java?plain=1#L64-L78<br>
 
 -JavaMailSender를 이용한 메일인증 기능<br>
 https://github.com/kongsh621/site/blob/85166c38b687c93cbfb77936f59c7d9e427f32b9/java/com/example/project01/service/MailServiceImpl.java?plain=1#L16-L71<br>
