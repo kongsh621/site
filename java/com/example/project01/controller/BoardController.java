@@ -63,9 +63,8 @@ public class BoardController {
 
         log.info("write = {}", board);
         model.addAttribute("loginSession", loginMember);
-        // 파일은 board가 아니라 MultipartFile 로 읽어와서 처리 후 데이터베이스에 추가한다
+        // 파일은 MultipartFile 로 읽어와서 처리 후 데이터베이스에 추가한다
 
-        log.info("-----------파일 받고 바로" +file.getOriginalFilename());
         if (file != null && !file.isEmpty()) { // 첨부파일이 있다면
             // 첨부파일 저장 경로
             String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
@@ -79,7 +78,7 @@ public class BoardController {
             File saveFile = new File(projectPath, fileName);
             file.transferTo(saveFile);
 
-            // DB에 값 넣기
+            // DB에 넣기
             board.setFilename(fileName);
             board.setFilepath("/files/" + fileName);
 
