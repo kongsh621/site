@@ -9,18 +9,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.xml.stream.events.Comment;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @AllArgsConstructor
@@ -63,8 +63,9 @@ public class BoardController {
 
         log.info("write = {}", board);
         model.addAttribute("loginSession", loginMember);
-        // 파일은 MultipartFile 로 읽어와서 처리 후 데이터베이스에 추가한다
+        // 파일은 board가 아니라 MultipartFile 로 읽어와서 처리 후 데이터베이스에 추가한다
 
+        log.info("-----------파일 받고 바로" +file.getOriginalFilename());
         if (file != null && !file.isEmpty()) { // 첨부파일이 있다면
             // 첨부파일 저장 경로
             String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
@@ -78,7 +79,7 @@ public class BoardController {
             File saveFile = new File(projectPath, fileName);
             file.transferTo(saveFile);
 
-            // DB에 넣기
+            // DB에 값 넣기
             board.setFilename(fileName);
             board.setFilepath("/files/" + fileName);
 
@@ -125,11 +126,10 @@ public class BoardController {
             // 다운 버튼 표시
             if (boardResult.getFilename() != null && !boardResult.getFilename().isEmpty()){
                 log.info("파일이 존재" + boardResult.getFilename());
-                model.addAttribute("imgSession", boardResult.getFilepath());
                 model.addAttribute("attachedFile", boardResult);
             }
 
-            // 만약 회원이라면, 작성자일 때 writer 세션에 저장해서 다른 양식 출력
+            // 만약 작성자라면 다른 양식 출력
             if (loginMember != null && loginMember.getNickname().equals(boardResult.getWriter())) {
                 // 일단 null인지부터 확인해줘야 오류 안 난다
                 model.addAttribute("writer", loginMember);
@@ -190,26 +190,19 @@ public class BoardController {
             return newCookie;
         }
     }
-
-    @RequestMapping("/writeComment")
-    public String writeBoardComment(@ModelAttribute BoardCommentDTO boardCommentDTO, RedirectAttributes ra,
-                                    @SessionAttribute(name = "loginMember", required = false) MemberDTO loginMember,
-                                    Model model, @RequestParam int comPage){
-        model.addAttribute("loginSession", loginMember);
-
-        try {
-            boolean result = boardService.writeComment(boardCommentDTO); // 새 댓글 추가
-            Long postId = boardCommentDTO.getPostid();
-            Criteria criteria = new Criteria(comPage, 10, null);
-
-            // 댓글 페이징
-            if (result){
-                return redirectMessage.sendRedirect(ra, postId, criteria, "댓글을 작성하였습니다.", "/read");
-            }
-            return redirectMessage.sendRedirect(ra, postId, criteria, "댓글 작성에 실패했습니다.", "/read");
-        } catch (Exception e){
-            return redirectMessage.sendRedirect(ra, boardCommentDTO.getPostid(), null, "시스템 오류가 발생했습니다.", "/read");
-        }
+    
+    @PostMapping("/writeComment")
+    public ResponseEntity<Comment> addComment(@RequestBody BoardCommentDTO comment){
+        boolean result = boardService.writeComment(comment);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+    @GetMapping("/commentList")
+    public ResponseEntity<List<BoardCommentDTO>> getCommentList(Criteria criteria, @RequestParam Long id){
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("criteria", criteria);
+        map.put("postid", id);
+        List<BoardCommentDTO> comments = boardService.getCommentWithPaging(map);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
     @PostMapping("/update")
