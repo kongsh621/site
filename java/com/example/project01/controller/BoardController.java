@@ -65,7 +65,7 @@ public class BoardController {
         model.addAttribute("loginSession", loginMember);
         // 파일은 board가 아니라 MultipartFile 로 읽어와서 처리 후 데이터베이스에 추가한다
 
-        if (file != null && !file.isEmpty()) { // 첨부파일이 있다면
+        if (!file.isEmpty()) { // 첨부파일이 있다면
             // 첨부파일 저장 경로
             String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
 
@@ -245,7 +245,7 @@ public class BoardController {
         // 파일이 존재하면
         if (file != null) {
             // 불러온 첨부파일에 대해 해당 파일들을 로컬디스크에서 지워준다
-            File attachedFile = new File("C:\\kjy\\workspace\\project1\\src\\main\\resources\\static\\files" + File.separator + file.getFilename());
+            File attachedFile = new File(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files" + File.separator + file.getFilename());
 
             if (attachedFile.exists()) {
                 if (attachedFile.delete()) {
