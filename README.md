@@ -63,6 +63,4 @@ https://github.com/kongsh621/site/blob/c75df270134031b8b407785016eec3f146920c28/
 -평점 기능<br>
 https://github.com/kongsh621/site/blob/61034ca8936824f59d038150a7b97b5d53a1d1f7/java/com/example/project01/controller/InfoBoardController.java?plain=1#L173-L219<br>
 -첨부파일 저장<br>
-https://github.com/kongsh621/site/blob/a1ecf03795ed1ac638b559753faeb4d639e24408/java/com/example/project01/controller/BoardController.java?plain=1#L58-L98<br>
-
-
+https://github.com/kongsh621/site/blob/1a2ba765d6e058cc60db04e5139b75a84ccfd03e/java/com/example/project01/controller/BoardController.java?plain=1#L58-L98
