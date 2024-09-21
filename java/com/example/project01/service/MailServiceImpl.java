@@ -22,6 +22,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
+        // 보낼 MimeMessage 생성
         MimeMessage message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);
@@ -44,13 +45,13 @@ public class MailServiceImpl implements MailService {
     public String createKey() { // 랜덤 인증코드 생성
         int leftLimit = 48; // 0
         int rightLimit = 122; // z
-        int targetStringLength = 10;
-        Random random = new Random();
-        String key = random.ints(leftLimit, rightLimit + 1)
-            .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-            .limit(targetStringLength)
-            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-            .toString();
+        int targetStringLength = 10; 
+        Random random = new Random(); // 랜덤 클래스를 이용해 인증번호 생성
+        String key = random.ints(leftLimit, rightLimit + 1) // 범위 제한 (intstream을 반환)
+                            .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97)) // 0~9 / a~z / A~Z 조합
+                            .limit(targetStringLength) // 문자열 크기
+                            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append) // StringBuilder 객체 생성
+                            .toString();
 
         return key;
     }
@@ -58,7 +59,6 @@ public class MailServiceImpl implements MailService {
     @Override
     public String sendSimpleMessage(String to) throws Exception {
         ePw = createKey();
-
         MimeMessage message = createMessage(to);
 
         try {
