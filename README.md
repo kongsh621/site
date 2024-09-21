@@ -57,7 +57,7 @@ https://github.com/kongsh621/site/blob/bce467289d5faff26ab2f21bdcd0fd020bedcf3e/
 https://github.com/kongsh621/site/blob/bce467289d5faff26ab2f21bdcd0fd020bedcf3e/java/com/example/project01/service/UserService.java?plain=1#L64-L78<br>
 
 -JavaMailSender를 이용한 메일인증 기능<br>
-https://github.com/kongsh621/site/blob/85166c38b687c93cbfb77936f59c7d9e427f32b9/java/com/example/project01/service/MailServiceImpl.java?plain=1#L16-L71<br>
+https://github.com/kongsh621/site/blob/f0a0d2863927e77bed5a278ee27715c62c9f97ac/java/com/example/project01/service/MailServiceImpl.java?plain=1#L16-L72<br>
 -찜 기능<br>
 https://github.com/kongsh621/site/blob/c75df270134031b8b407785016eec3f146920c28/java/com/example/project01/controller/InfoBoardController.java?plain=1#L288-L345<br>
 -평점 기능<br>
