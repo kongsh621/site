@@ -35,7 +35,7 @@ https://myblog7363.tistory.com/
 주요 기능별 코드 정리<br>
 
 -카카오 로그인 연동<br>
-https://github.com/kongsh621/site/blob/01a0019281c21831915ee641323c65c305cd47db/java/com/example/project01/controller/MemberController.java?plain=1#L173-L251<br><br>
+https://github.com/kongsh621/site/blob/838f582d6e8f289faf81d9c003b174d8472c5689/java/com/example/project01/controller/MemberController.java?plain=1#L173-L250<br>
 
 -로그인, 쿠키에 아이디 저장, 기존 경로 저장<br>
 https://github.com/kongsh621/site/blob/a23b64d4ce6271059d85f94801f379fc784b70c0/java/com/example/project01/controller/MemberController.java?plain=1#L122-L171<br>
